@@ -84,6 +84,7 @@ articulation_controller = my_franka.get_articulation_controller()
 
 reset_needed = False
 task_completed = False
+
 while simulation_app.is_running():
     my_world.step(render=True)
     if my_world.is_stopped() and not reset_needed:
@@ -95,7 +96,7 @@ while simulation_app.is_running():
             my_controller.reset()
             reset_needed = False
             task_completed = False
-        observations = my_world.get_observations()
+        observations = my_world.get_observations()       
         actions = my_controller.forward(
             picking_position=cube.get_local_pose()[0],
             placing_position=np.array([-0.3, -0.3, 0.0515 / 2.0]),

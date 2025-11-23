@@ -1,0 +1,12 @@
+syntax = "proto3";
+package daidai.protocol;
+
+/**
+ * @brief 旋转四元数的表示方法
+ */
+message Quaternion {
+  double x = 1;
+  double y = 2;
+  double z = 3;
+  double w = 4;
+}

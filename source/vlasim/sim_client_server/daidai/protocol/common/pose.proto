@@ -1,0 +1,13 @@
+syntax = "proto3";
+package daidai.protocol;
+
+import public "daidai/protocol/common/position.proto";
+import public "daidai/protocol/common/quaternion.proto";
+
+/**
+ * @brief 使用平移向量和四元数表示的三维空间位姿
+ */
+message Pose {
+  Position position = 1;       // 三维平移向量，单位是米
+  Quaternion orientation = 2;  // 四元数
+}

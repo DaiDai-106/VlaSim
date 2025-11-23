@@ -1,0 +1,14 @@
+syntax = "proto3";
+package daidai.protocol;
+
+
+/**
+ * @brief 轴关节运动表示
+ */
+message JointState {
+  string name = 1;      // joint的名称 
+  uint32 sequence = 2;  // 该状态的序列索引值
+  double position = 3;  // 轴值， 弧度或米
+  double velocity = 4;  // 轴速度，角速度或线速度 
+  double effort = 5;    // 力矩
+}
