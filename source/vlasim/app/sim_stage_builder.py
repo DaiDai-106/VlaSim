@@ -5,7 +5,7 @@ from vlasim.utils.logger import Logger
 
 logger = Logger() 
 
-# sim manager
+# sim manager  需要适配IsaacSim的World
 class SimStageBuilder:
     def __init_(self):
         self.articulation = None
