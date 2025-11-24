@@ -10,7 +10,7 @@ from daidai.protocol.sim import sim_observation_service_pb2_grpc
 from vlasim.utils.logger import Logger
 logger = Logger()
 
-class Rpc_Client:
+class RpcClient:
     def __init__(self, client_host ):
         for i in range(600):
             try:
@@ -54,5 +54,5 @@ class Rpc_Client:
             req.robot_pose.orientation.z,
             req.robot_pose.orientation.w,
         ) = init_rotation
-        response = stub.InitRobot(req)
+        response = stub.InitScene(req)
         return response

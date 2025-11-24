@@ -10,7 +10,39 @@ import grpc
 from daidai.protocol.sim import sim_observation_service_pb2
 from daidai.protocol.sim import sim_observation_service_pb2_grpc
 
+class ObservationService(sim_observation_service_pb2_grpc.SimObservationService):
+    def __init__(self, server_function):
+        self.server_function = server_function
 
+
+    def InitScene(self, req, rsp):
+        rsp = sim_observation_service_pb2.InitSceneRsp()
+        target_position = np.array(
+            [
+                req.robot_pose.position.x,
+                req.robot_pose.position.y,
+                req.robot_pose.position.z,
+            ]
+        )
+        target_rotation = np.array(
+            [
+                req.robot_pose.orientation.x,
+                req.robot_pose.orientation.y,
+                req.robot_pose.orientation.z,
+                req.robot_pose.orientation.w,
+            ]
+        )
+        rsp.msg = self.server_function.blocking_start_server(
+            data={
+                "scene_usd_path": req.scene_usd_path,
+                "robot_position": target_position,
+                "robot_rotation": target_rotation,
+            },
+            Command=1,
+        )
+
+        return rsp
+    
 
 class GrpcServer:
     def __init__(self, server_function):
