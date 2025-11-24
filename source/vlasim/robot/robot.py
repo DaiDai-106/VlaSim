@@ -29,7 +29,6 @@ class IsaacSimRobot(Robot):
 
         self.client = RpcClient(client_host)
         self.client.InitScene(
-            robot_usd="",
             scene_usd=scene_usd,
             init_position=position,
             init_rotation=rotation,

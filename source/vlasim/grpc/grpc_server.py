@@ -44,7 +44,7 @@ class ObservationService(sim_observation_service_pb2_grpc.SimObservationService)
                 "robot_position": target_position,
                 "robot_rotation": target_rotation,
             },
-            Command=1,
+            command=1,
         )
 
         return rsp

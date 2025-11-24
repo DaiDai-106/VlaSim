@@ -43,10 +43,8 @@ class RpcClient:
         init_rotation=[0, 0, 0, 1],
     ):
         stub = sim_observation_service_pb2_grpc.SimObservationServiceStub(self.channel)
-        req = sim_observation_service_pb2.InitRobotReq()
-        req.scene_usd_path = (
-            scene_usd,
-        )
+        req = sim_observation_service_pb2.InitSceneReq()
+        req.scene_usd_path = scene_usd
         (
             req.robot_pose.position.x,
             req.robot_pose.position.y,

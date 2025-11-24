@@ -10,7 +10,6 @@ from vlasim.app.command_manager import CommandManager
 from vlasim.app.sim_stage_builder import SimStageBuilder
 from vlasim.grpc.grpc_server import GrpcServer
 
-
 parser = argparse.ArgumentParser(description="standalone_sim sever launcher script.")
 parser.add_argument("--physics_step", type=int, default=120)
 parser.add_argument("--rendering_step", type=int, default=30)

@@ -58,6 +58,8 @@ class CommandManager:
     def on_command_step(self):
         if not self.data or not self.command:
             return
+        if self.data_to_send is not None:
+            return
         else:
             with tracer.start_as_current_span(
                 f"server.step_command_{self.command}"
@@ -68,6 +70,7 @@ class CommandManager:
                         init_position=self.data["robot_position"],
                         init_rotation=self.data["robot_rotation"],
                     )
+                    logger.info("init scene success")
                     self.data_to_send = "success"
                 elif self.command == 2:
                     pass 

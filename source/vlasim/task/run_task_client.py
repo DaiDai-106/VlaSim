@@ -70,6 +70,7 @@ def main():
 
     task_manager = TaskManager( args )
     task_manager.model_policy()
+    logger.info("Task finished")
     # benchmark.evaluate_policy()  # Evaluate agent on the benchmark
     # policy.shutdown()
 
