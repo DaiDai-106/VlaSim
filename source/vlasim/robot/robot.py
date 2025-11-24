@@ -1,5 +1,11 @@
 import numpy as np
+import sys 
 import os, time
+
+current_directory = os.path.dirname(os.path.abspath(__file__))
+if current_directory not in sys.path:
+    sys.path.append(current_directory)
+
 
 from vlasim.robot import Robot
 from vlasim.grpc.client import RpcClient

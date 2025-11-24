@@ -34,6 +34,7 @@ class CommandManager:
         self._lock = threading.Lock()
         self.condition = threading.Condition()
         self.result_queue = queue.Queue()
+        self.exit = False
 
     # 异步执行服务
     def blocking_start_server(self, data, command):
@@ -75,7 +76,6 @@ class CommandManager:
             with self.condition:
                 self.condition.notify_all()
                         
-
     def _init_scene_cfg(
         self,
         scene_usd,
@@ -83,4 +83,6 @@ class CommandManager:
         init_rotation=[1, 0, 0, 0],
     ):
         logger.info("start isaac sim starge configuration")
-        
+     
+    def on_physics_step(self):
+        self.on_command_step()

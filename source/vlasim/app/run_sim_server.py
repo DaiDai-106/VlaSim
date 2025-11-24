@@ -3,6 +3,9 @@ import os
 from pathlib import Path
 import sys
 
+project_root = Path(__file__).resolve().parent.parent.parent
+sys.path.append(str(project_root))
+
 from vlasim.app.command_manager import CommandManager
 from vlasim.app.sim_stage_builder import SimStageBuilder
 from vlasim.grpc.grpc_server import GrpcServer
@@ -40,7 +43,7 @@ def main():
     # hou xu xu yao tian jia sim 
     sim_stage_builder = SimStageBuilder() 
     server_function = CommandManager(
-        sim_stage_builder = sim_stage_builder,
+        sim_stage = sim_stage_builder,
     )
     rpc_server = GrpcServer(server_function=server_function)
     rpc_server.start()

@@ -2,6 +2,12 @@ import os
 import numpy as np
 import sys
 from pathlib import Path
+
+current_directory = os.path.dirname(os.path.abspath(__file__))
+if current_directory not in sys.path:
+    sys.path.append(current_directory)
+
+
 import threading
 from concurrent.futures import ThreadPoolExecutor
 import grpc

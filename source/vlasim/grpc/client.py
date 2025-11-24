@@ -4,6 +4,10 @@ import sys, os
 import time
 import json
 
+current_directory = os.path.dirname(os.path.abspath(__file__))
+if current_directory not in sys.path:
+    sys.path.append(current_directory)
+
 # observation
 from daidai.protocol.sim import sim_observation_service_pb2
 from daidai.protocol.sim import sim_observation_service_pb2_grpc
