@@ -17,7 +17,6 @@ from vlasim.utils.utils import *
 
 logger = Logger() 
 
-
 from isaacsim.core.prims import SingleArticulation
 from isaacsim.core.api.materials import PhysicsMaterial, OmniPBR, OmniGlass
 from isaacsim.core.api.objects import cuboid, cylinder
@@ -36,6 +35,7 @@ from omni.kit.viewport.utility import (
     get_num_viewports,
     get_active_viewport_and_window,
 )
+from pxr import Usd, UsdGeom, UsdShade, Sdf, Gf, UsdPhysics, PhysxSchema
 
 import omni.ui as ui
 import omni.replicator.core as rep
@@ -53,8 +53,6 @@ class CommandManager:
         sim_stage,
     ):
         self.sim_stage = sim_stage
-
-        # 
         self.data = None
         self.command = 0  # index flag
         self.data_to_send = None
@@ -62,6 +60,7 @@ class CommandManager:
         self.condition = threading.Condition()
         self.result_queue = queue.Queue()
         self.exit = False
+        self.status = 0
 
     # 异步执行服务
     def blocking_start_server(self, data, command):
@@ -80,17 +79,19 @@ class CommandManager:
             result = self.data_to_send
             self.data_to_send = None
             self.command = 0
+            self.status = 0
             self.result_queue.put(result)
 
     def on_command_step(self):
         if not self.data or not self.command:
             return
-        if self.data_to_send is not None:
+        if self.status:
             return
         else:
             with tracer.start_as_current_span(
                 f"server.step_command_{self.command}"
             ) as span:
+                self.status = 1
                 if self.command == 1:
                     self._init_scene_cfg(
                         scene_usd=self.data["scene_usd_path"],
@@ -112,9 +113,9 @@ class CommandManager:
         init_position=[0, 0, 0],
         init_rotation=[1, 0, 0, 0],
     ):
-        logger.info("start isaac sim starge configuration")
+        logger.info(f"start isaac sim starge configuration_{ threading.get_ident() }")
         # 尝试加载场景
-        scene_usd_path = str(assets_path()) + "/" + scene_usd
+        scene_usd_path = str(assets_path()) + "/" + scene_usd + "/" + scene_usd + ".usda"
         prim = get_prim_at_path("/World")
         # 添加引用
         add_reference_to_stage(scene_usd_path, "/World")

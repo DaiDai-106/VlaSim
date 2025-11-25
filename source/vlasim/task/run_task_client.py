@@ -14,7 +14,7 @@ class TaskManager:
     def __init__(self,args):
         self.single_evaluate_ret = None
         self.output_dir = args.output_dir
-        self.tasks = self.check_task(args)    # TODO 后续可以支持更多并行的tasks 
+        self.task = self.check_task(args)    # TODO 后续可以支持更多并行的tasks 
         self.args = args
         self.task_config = None
 
@@ -31,7 +31,7 @@ class TaskManager:
     def model_policy(self):
         # init robot and scene
         robot = IsaacSimRobot(
-            self.tasks,
+            self.task,
             client_host=self.args.client_host
         )
 
@@ -49,7 +49,7 @@ def main():
     parser.add_argument(
         "--task_name",
         type=str,
-        default="iros_stamp_the_seal",
+        default="pour_water",
         help="Specify the task to evaluate",
     )
     parser.add_argument(

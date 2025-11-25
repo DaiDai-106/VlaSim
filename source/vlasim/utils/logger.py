@@ -55,6 +55,7 @@ class Logger:
             console_handler = logging.StreamHandler(sys.stdout)
             console_handler.setFormatter(ColoredFormatter())
             self.logger.addHandler(console_handler)
+            self.logger.addHandler(logging.FileHandler("app.log"))
 
         # Wrap all logging methods with error handling
         self._wrap_logging_methods()

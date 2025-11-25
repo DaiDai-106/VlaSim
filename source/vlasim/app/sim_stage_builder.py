@@ -1,13 +1,15 @@
 import asyncio, os
 import numpy as np
 
+from isaacsim.core.api import World
 from vlasim.utils.logger import Logger
 
 logger = Logger() 
 
 # sim manager  需要适配IsaacSim的World
 class SimStageBuilder:
-    def __init_(self):
+    def __init__(self, world: World):
+        self.my_world: World = world
         self.articulation = None
         self.articulation_rmpflow = None
         self._target = None

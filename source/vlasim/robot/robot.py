@@ -20,7 +20,7 @@ from copy import deepcopy
 class IsaacSimRobot(Robot):
     def __init__(
         self,
-        scene_usd="Pick_Place_Franka_Yellow_Table.usd",
+        scene_usd="pour water",
         client_host="localhost:50051",
         position=[0, 0, 0],
         rotation=[0, 0, 0, 1],

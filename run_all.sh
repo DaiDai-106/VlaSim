@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # 设置 Python 解释器路径
-PYTHON_BIN="/home/wangyf/miniconda3/envs/env_isaacsim/bin/python"
+PYTHON_BIN="/home/daidai/miniconda3/envs/env_isaacsim/bin/python"
 
 # 定义清理函数
 cleanup() {
@@ -40,4 +40,6 @@ $PYTHON_BIN run_client.py
 
 # 4. Client 运行结束后，清理进程
 echo "Client finished."
-cleanup
+# cleanup
+
+sleep 5000
