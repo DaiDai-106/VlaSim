@@ -6,19 +6,25 @@ PYTHON_BIN="/home/daidai/miniconda3/envs/env_isaacsim/bin/python"
 # 定义清理函数
 cleanup() {
     echo "Stopping processes..."
+    # 关闭 tail（必须在 Server 前清理）
+    if [ -n "$TAIL_PID" ]; then
+        kill $TAIL_PID 2>/dev/null
+        wait $TAIL_PID 2>/dev/null
+    fi
     # 关闭 Server
     if [ -n "$SERVER_PID" ]; then
         kill $SERVER_PID 2>/dev/null
-    fi
-    # 关闭 tail
-    if [ -n "$TAIL_PID" ]; then
-        kill $TAIL_PID 2>/dev/null
+        wait $SERVER_PID 2>/dev/null
     fi
     exit
 }
-
-# 捕获信号
-trap cleanup SIGINT SIGTERM
+# 捕获信号（用引号包裹以兼容 sh）
+trap 'cleanup' SIGINT SIGTERM EXIT
+# 0. 启动前清理旧的 tail 和 server 进程
+echo "Cleaning up old processes..."
+pkill -f "tail -f server.log" 2>/dev/null || true
+pkill -f "run_server.py" 2>/dev/null || true
+sleep 1
 
 # 1. 启动 Server (后台运行)，输出重定向到文件
 echo "Starting Server..."
@@ -36,8 +42,8 @@ sleep 5
 
 # 3. 启动 Client
 echo "Starting Client..."
-$PYTHON_BIN run_client.py
 
+$PYTHON_BIN run_client.py
 # 4. Client 运行结束后，清理进程
 echo "Client finished."
 # cleanup
