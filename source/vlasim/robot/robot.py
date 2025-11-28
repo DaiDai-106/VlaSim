@@ -24,9 +24,7 @@ class IsaacSimRobot(Robot):
         client_host="localhost:50051",
         position=[0, 0, 0],
         rotation=[0, 0, 0, 1],
-        gripper_control_type=0,
     ):
-
         self.client = RpcClient(client_host)
         self.client.InitScene(
             scene_usd=scene_usd,
@@ -37,4 +35,3 @@ class IsaacSimRobot(Robot):
         self.cam_info = None
         self.init_position = position
         self.init_rotation = rotation
-        self.gripper_control_type = gripper_control_type

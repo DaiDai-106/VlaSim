@@ -32,10 +32,10 @@ class TaskManager:
         # init robot and scene
         robot = IsaacSimRobot(
             self.task,
-            client_host=self.args.client_host
+            client_host=self.args.client_host,
+            position=[1.4, 0.8, 0.7],
+            rotation=[ 0.7071068, 0, 0, -0.7071068 ] # w x y z
         )
-
-
 
 
 def main():

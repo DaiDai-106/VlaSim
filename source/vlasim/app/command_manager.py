@@ -28,6 +28,11 @@ from isaacsim.robot.manipulators.grippers.surface_gripper import SurfaceGripper
 from isaacsim.core.utils.stage import get_current_stage
 from isaacsim.sensors.camera import Camera
 from isaacsim.sensors.physics import ContactSensor
+from isaacsim.robot.manipulators import SingleManipulator
+from isaacsim.robot.manipulators.examples.franka.controllers.pick_place_controller import PickPlaceController
+from isaacsim.robot.manipulators.grippers import ParallelGripper
+from isaacsim.storage.native import get_assets_root_path
+
 from omni.kit.viewport.utility import (
     create_viewport_window,
     get_active_viewport,
@@ -61,6 +66,10 @@ class CommandManager:
         self.result_queue = queue.Queue()
         self.exit = False
         self.status = 0
+
+        self.robot = None
+        self.controller = None
+        self.articulation_controller = None
 
     # 异步执行服务
     def blocking_start_server(self, data, command):
@@ -111,7 +120,7 @@ class CommandManager:
         self,
         scene_usd,
         init_position=[0, 0, 0],
-        init_rotation=[1, 0, 0, 0],
+        init_rotation=[0, 0, 0, 1],
     ):
         logger.info(f"start isaac sim starge configuration_{ threading.get_ident() }")
         # 尝试加载场景
@@ -127,11 +136,46 @@ class CommandManager:
             Gf.Vec3d(init_position[0], init_position[1], init_position[2]), True
         )
 
+        # 这里尝试添加机器人的引用, 目前写死的franka, 无非是你想将franka放置在哪里
+        all_assets_root_path = get_assets_root_path()
+        asset_path = all_assets_root_path + "/Isaac/Robots/FrankaRobotics/FrankaPanda/franka.usd"
+        robot = add_reference_to_stage(usd_path=asset_path, prim_path="/World/Franka")
+        robot.GetVariantSet("Gripper").SetVariantSelection("AlternateFinger")
+        robot.GetVariantSet("Mesh").SetVariantSelection("Quality")
+        gripper = ParallelGripper(
+            end_effector_prim_path="/World/Franka/panda_rightfinger",
+            joint_prim_names=["panda_finger_joint1", "panda_finger_joint2"],
+            joint_opened_positions=np.array([0.05, 0.05]),
+            joint_closed_positions=np.array([0.02, 0.02]),
+            action_deltas=np.array([0.01, 0.01]),
+        )
+
+        my_franka = self.sim_stage.my_world.scene.add(
+            SingleManipulator(
+                prim_path="/World/Franka",
+                name="my_franka",
+                end_effector_prim_path="/World/Franka/panda_rightfinger",
+                gripper=gripper,
+                position=init_position,  # 设置初始位置
+                orientation=init_rotation  # 设置初始旋转（四元数）
+            )
+        )
+
+        my_franka.gripper.set_default_state(my_franka.gripper.joint_opened_positions)
+        self.sim_stage.my_world.reset()
+        my_controller = PickPlaceController(
+            name="pick_place_controller", gripper=my_franka.gripper, robot_articulation=my_franka
+        )
+        articulation_controller = my_franka.get_articulation_controller()
+        self.controller = my_controller
+        self.articulation_controller = articulation_controller
+
         # 设置物理场景
         stage = omni.usd.get_context().get_stage()
         self.scene = UsdPhysics.Scene.Define(stage, Sdf.Path("/physicsScene"))
         self.scene.CreateGravityDirectionAttr().Set(Gf.Vec3f(0.0, 0.0, -1.0))
         self.scene.CreateGravityMagnitudeAttr().Set(9.81)
+
         self._play()
 
         
