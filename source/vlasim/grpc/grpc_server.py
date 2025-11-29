@@ -40,6 +40,7 @@ class ObservationService(sim_observation_service_pb2_grpc.SimObservationService)
         )
         rsp.msg = self.server_function.blocking_start_server(
             data={
+                "camera_config":req.camera_config,
                 "scene_usd_path": req.scene_usd_path,
                 "robot_position": target_position,
                 "robot_rotation": target_rotation,

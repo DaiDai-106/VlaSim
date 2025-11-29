@@ -9,9 +9,9 @@ import public "daidai/protocol/common/joint.proto";
  * @brief 场景的初始化请求，因暂时机器人程序里调用是写死的franka,所以这里主要配置的是除机械臂外的场景
  */
 message InitSceneReq {
-    // string robot_usd_path = 2;
-    string scene_usd_path = 1;
-    Pose robot_pose = 2;
+    string camera_config = 1;
+    string scene_usd_path = 2;
+    Pose robot_pose = 3;
     // string stand_type = 5;
     // float stand_size_x = 6;
     // float stand_size_y = 7;

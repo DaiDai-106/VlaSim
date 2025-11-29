@@ -14,6 +14,7 @@ from vlasim.utils.logger import Logger
 from pprint import pprint
 from opentelemetry import trace
 from vlasim.utils.utils import *
+from vlasim.app.usd_base import USDBase
 
 logger = Logger() 
 
@@ -40,6 +41,7 @@ from omni.kit.viewport.utility import (
     get_num_viewports,
     get_active_viewport_and_window,
 )
+
 from pxr import Usd, UsdGeom, UsdShade, Sdf, Gf, UsdPhysics, PhysxSchema
 
 import omni.ui as ui
@@ -70,6 +72,10 @@ class CommandManager:
         self.robot = None
         self.controller = None
         self.articulation_controller = None
+        self.cameras = None
+        self.sensor_base = USDBase()
+        self.sensor_base_initialized = False
+        self.camera_viewports = dict()
 
     # 异步执行服务
     def blocking_start_server(self, data, command):
@@ -104,6 +110,7 @@ class CommandManager:
                 if self.command == 1:
                     self._init_scene_cfg(
                         scene_usd=self.data["scene_usd_path"],
+                        camera_config = self.data["camera_config"],
                         init_position=self.data["robot_position"],
                         init_rotation=self.data["robot_rotation"],
                     )
@@ -119,14 +126,14 @@ class CommandManager:
     def _init_scene_cfg(
         self,
         scene_usd,
+        camera_config,
         init_position=[0, 0, 0],
         init_rotation=[0, 0, 0, 1],
     ):
         logger.info(f"start isaac sim starge configuration_{ threading.get_ident() }")
         # 尝试加载场景
-        scene_usd_path = str(assets_path()) + "/" + scene_usd + "/" + scene_usd + ".usda"
+        scene_usd_path = os.path.join( assets_path(),scene_usd)
         prim = get_prim_at_path("/World")
-        # 添加引用
         add_reference_to_stage(scene_usd_path, "/World")
         camera_state = ViewportCameraState("/OmniverseKit_Persp")
         camera_state.set_position_world(
@@ -136,7 +143,7 @@ class CommandManager:
             Gf.Vec3d(init_position[0], init_position[1], init_position[2]), True
         )
 
-        # 这里尝试添加机器人的引用, 目前写死的franka, 无非是你想将franka放置在哪里
+        # 这里尝试添加机器人的引用, 目前写死的franka, 无非是你想将franka放置在哪里 TODO 这里暂时是写死的机器人
         all_assets_root_path = get_assets_root_path()
         asset_path = all_assets_root_path + "/Isaac/Robots/FrankaRobotics/FrankaPanda/franka.usd"
         robot = add_reference_to_stage(usd_path=asset_path, prim_path="/World/Franka")
@@ -176,11 +183,47 @@ class CommandManager:
         self.scene.CreateGravityDirectionAttr().Set(Gf.Vec3f(0.0, 0.0, -1.0))
         self.scene.CreateGravityMagnitudeAttr().Set(9.81)
 
+        # 配置场景中的相机，这是非机械臂本体的相机
+        camera_json = load_json(os.path.join( assets_path(),camera_config))
+        self.cameras = camera_json["cameras"]
+
+        logger.info( self.cameras )
         self._play()
 
         
     def _play(self):
-        self.sim_stage.my_world.play()
+        self.sim_stage.my_world.play() 
+        # 这里的主要目的是想让数据先进行一次生成
+        if not self.sensor_base_initialized:
+            self.parseCameraConfig( self.cameras )   # 后续可以接入ros
+            self.sensor_base_initialized = True
      
     def on_physics_step(self):
         self.on_command_step()
+        if( self.sensor_base_initialized ):
+            self.sensor_base.update_rgb()   # 每次step 更新一下照片
+
+    def parseCameraConfig(self, config):
+        for camera in config :
+            if camera.startswith('/'):  # 这里进行了一层保护
+                camera_param = {
+                        "path": camera,
+                        "frequency": int(1),
+                        "resolution": {
+                            "width": config[camera]["resolution"][0],
+                            "height": config[camera]["resolution"][1],
+                        },
+                        "pose":{
+                            "position":config[camera]["camera_pose"]["position"],
+                            "quaternion":config[camera]["camera_pose"]["quaternion"],
+                        }
+                    }
+                
+                self.sensor_base._init_camera(
+                        self.sim_stage.my_world.get_rendering_dt(),
+                        camera_param,
+                    )
+
+
+                
+            

@@ -7,10 +7,11 @@ from pathlib import Path
 from collections import defaultdict
 from vlasim.robot.robot import IsaacSimRobot
 from vlasim.utils.logger import Logger
+from vlasim.utils.utils import *
 
 logger = Logger()
 
-class TaskManager:
+class TaskManager( object ):
     def __init__(self,args):
         self.single_evaluate_ret = None
         self.output_dir = args.output_dir
@@ -30,11 +31,18 @@ class TaskManager:
     # 进行模型推理的核心的接口
     def model_policy(self):
         # init robot and scene
+        task_config_file = os.path.join( assets_path(), "task_json", self.task + ".json" )
+        self.task_config = load_json( task_config_file )        
+        robot_position = self.task_config["robot"]["robot_init_pose"]["position"]
+        robot_rotation = self.task_config["robot"]["robot_init_pose"]["quaternion"]
+
+        # 首先对场景和机械臂摆放进行了配置
         robot = IsaacSimRobot(
-            self.task,
-            client_host=self.args.client_host,
-            position=[1.4, 0.8, 0.7],
-            rotation=[ 0.7071068, 0, 0, -0.7071068 ] # w x y z
+            camera_config=self.task_config["cameras"]["path"],
+            scene_usd = self.task_config["scene"]["scene_usd"],
+            client_host = self.args.client_host,
+            position = robot_position,
+            rotation = robot_rotation, # w x y z
         )
 
 
@@ -70,9 +78,11 @@ def main():
 
     task_manager = TaskManager( args )
     task_manager.model_policy()
-    logger.info("Task finished")
+
     # benchmark.evaluate_policy()  # Evaluate agent on the benchmark
     # policy.shutdown()
+
+    logger.info("Task finished")
 
 
 if __name__ == "__main__":

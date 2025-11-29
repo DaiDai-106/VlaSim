@@ -20,13 +20,17 @@ from copy import deepcopy
 class IsaacSimRobot(Robot):
     def __init__(
         self,
+        camera_config = "",
         scene_usd="pour water",
         client_host="localhost:50051",
         position=[0, 0, 0],
         rotation=[0, 0, 0, 1],
     ):
         self.client = RpcClient(client_host)
+
+        # 添加相机传感器
         self.client.InitScene(
+            camera_config = camera_config,
             scene_usd=scene_usd,
             init_position=position,
             init_rotation=rotation,

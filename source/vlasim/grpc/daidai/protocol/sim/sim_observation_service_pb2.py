@@ -36,7 +36,7 @@ from daidai.protocol.common import joint_pb2 as daidai_dot_protocol_dot_common_d
 from daidai.protocol.common.pose_pb2 import *
 from daidai.protocol.common.joint_pb2 import *
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n1daidai/protocol/sim/sim_observation_service.proto\x12\x0f\x64\x61idai.protocol\x1a!daidai/protocol/common/pose.proto\x1a\"daidai/protocol/common/joint.proto\"Q\n\x0cInitSceneReq\x12\x16\n\x0escene_usd_path\x18\x01 \x01(\t\x12)\n\nrobot_pose\x18\x02 \x01(\x0b\x32\x15.daidai.protocol.Pose\"\x1b\n\x0cInitSceneRsp\x12\x0b\n\x03msg\x18\x01 \x01(\t2b\n\x15SimObservationService\x12I\n\tInitScene\x12\x1d.daidai.protocol.InitSceneReq\x1a\x1d.daidai.protocol.InitSceneRspP\x00P\x01\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n1daidai/protocol/sim/sim_observation_service.proto\x12\x0f\x64\x61idai.protocol\x1a!daidai/protocol/common/pose.proto\x1a\"daidai/protocol/common/joint.proto\"h\n\x0cInitSceneReq\x12\x15\n\rcamera_config\x18\x01 \x01(\t\x12\x16\n\x0escene_usd_path\x18\x02 \x01(\t\x12)\n\nrobot_pose\x18\x03 \x01(\x0b\x32\x15.daidai.protocol.Pose\"\x1b\n\x0cInitSceneRsp\x12\x0b\n\x03msg\x18\x01 \x01(\t2b\n\x15SimObservationService\x12I\n\tInitScene\x12\x1d.daidai.protocol.InitSceneReq\x1a\x1d.daidai.protocol.InitSceneRspP\x00P\x01\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -44,9 +44,9 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'daidai.protocol.sim.sim_obs
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_INITSCENEREQ']._serialized_start=141
-  _globals['_INITSCENEREQ']._serialized_end=222
-  _globals['_INITSCENERSP']._serialized_start=224
-  _globals['_INITSCENERSP']._serialized_end=251
-  _globals['_SIMOBSERVATIONSERVICE']._serialized_start=253
-  _globals['_SIMOBSERVATIONSERVICE']._serialized_end=351
+  _globals['_INITSCENEREQ']._serialized_end=245
+  _globals['_INITSCENERSP']._serialized_start=247
+  _globals['_INITSCENERSP']._serialized_end=274
+  _globals['_SIMOBSERVATIONSERVICE']._serialized_start=276
+  _globals['_SIMOBSERVATIONSERVICE']._serialized_end=374
 # @@protoc_insertion_point(module_scope)

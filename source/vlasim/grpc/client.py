@@ -38,12 +38,14 @@ class RpcClient:
 
     def InitScene(
         self,
+        camera_config,
         scene_usd,
         init_position=[0, 0, 0],
         init_rotation=[0, 0, 0, 1],
     ):
         stub = sim_observation_service_pb2_grpc.SimObservationServiceStub(self.channel)
         req = sim_observation_service_pb2.InitSceneReq()
+        req.camera_config = camera_config
         req.scene_usd_path = scene_usd
         (
             req.robot_pose.position.x,
