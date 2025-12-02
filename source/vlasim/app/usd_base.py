@@ -6,6 +6,11 @@ import numpy as np
 from vlasim.utils.logger import Logger
 from isaacsim.sensors.camera import Camera
 
+from omni.isaac.core.utils.viewports import (
+    set_active_viewport_camera,
+    create_viewport_for_camera
+)
+
 logger = Logger() 
 
 class USDBase:
@@ -31,18 +36,16 @@ class USDBase:
         )
 
         self.camera = camera
-        camera.set_world_pose(position=param["pose"]["position"], orientation=param["pose"]["quaternion"])
+        camera.set_world_pose(position=param["pose"]["position"], orientation=param["pose"]["quaternion"], camera_axes="usd")    
         camera.initialize()
         rgb_data = self.camera.get_rgb()
         self.current_image = rgb_data
+        create_viewport_for_camera("camera viewport", param["path"])
+        # set_active_viewport_camera( param["path"] )      
 
-        self.window = ui.Window(
-                    title=param["path"],
-                    width=1300,
-                    height=740,  # 为标题栏留出额外空间
-                    visible=True,
-                    dockPreference=ui.DockPreference.DISABLED
-                )
+        # vp = viewport_util.create_viewport_window("Camera Preview", width=640, height=480)
+        # viewport_util.set_camera_for_viewport(vp, param["path"])
+        # vp.viewport_api.camera_path = param["path"]
     
         
     def update_rgb( self ):

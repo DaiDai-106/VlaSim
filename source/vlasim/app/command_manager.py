@@ -42,6 +42,12 @@ from omni.kit.viewport.utility import (
     get_active_viewport_and_window,
 )
 
+from omni.isaac.core.utils.viewports import (
+    set_active_viewport_camera,
+    create_viewport_for_camera,
+    get_viewport_names
+)
+
 from pxr import Usd, UsdGeom, UsdShade, Sdf, Gf, UsdPhysics, PhysxSchema
 
 import omni.ui as ui
